@@ -100,9 +100,6 @@ export default function LoginForm() {
                   <FormControl>
                     <Input type="password" {...field} />
                   </FormControl>
-                  {/* <FormDescription>
-                    This is your public display name.
-                  </FormDescription> */}
                   <FormMessage />
                 </FormItem>
               )}
