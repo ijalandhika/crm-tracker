@@ -3,7 +3,7 @@
 import { lazy, Suspense, useCallback, useState, useEffect } from "react";
 import { GetPelanggan } from "./actions";
 import { InitLoading } from "./loading";
-
+import { useRouter } from "next/navigation";
 import PelangganDataTable from "./data-table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,8 @@ import { Label } from "@radix-ui/react-label";
 const postsPerPage = 10;
 
 export default function Pelanggan() {
+  const router = useRouter();
+
   const [currentPage, setCurrentPage] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
   const [query, setQuery] = useState("");
@@ -64,7 +66,7 @@ export default function Pelanggan() {
           className="max-w-sm"
           onChange={onChangeQuery}
         />
-        <Button>
+        <Button onClick={() => router.push("/dashboard/pelanggan/tambah")}>
           <PlusIcon className="h-4 w-4" />
           <Label className="hidden md:block">Tambah Pelanggan</Label>
         </Button>

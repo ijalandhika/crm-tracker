@@ -40,8 +40,8 @@ const PelangganDataTable = ({
                 <div className="flex justify-between py-2 border-b last:border-0">
                   <Image
                     src={customer?.logo ?? "/images/logofront.png"}
-                    width={100}
-                    height={100}
+                    width={50}
+                    height={50}
                     alt={customer.nama}
                   />
                   <span className="font-medium">
