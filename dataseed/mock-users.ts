@@ -64,7 +64,7 @@ async function seedUsers(
 }
 
 console.log("Seeding sales user");
-seedUsers("sales", "sales@hotmail.com")
+seedUsers("admin", "admin@hotmail.com")
   .catch(console.error)
   .finally(() => process.exit());
 

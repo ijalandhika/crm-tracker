@@ -6,6 +6,9 @@ import { InitLoading } from "./loading";
 
 import PelangganDataTable from "./data-table";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { PlusIcon } from "lucide-react";
+import { Label } from "@radix-ui/react-label";
 
 const postsPerPage = 10;
 
@@ -55,12 +58,16 @@ export default function Pelanggan() {
 
   return (
     <>
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 justify-between">
         <Input
           placeholder="Cari berdasarkan nama..."
           className="max-w-sm"
           onChange={onChangeQuery}
         />
+        <Button>
+          <PlusIcon className="h-4 w-4" />
+          <Label className="hidden md:block">Tambah Pelanggan</Label>
+        </Button>
       </div>
       <Suspense fallback={<InitLoading />}>
         <PelangganComponent />
