@@ -1,6 +1,11 @@
 "use server";
 
-import { PROVINCE_TABLE, CITY_TABLE, CUSTOMER_TABLE } from "@/constants/tables";
+import {
+  PROVINCE_TABLE,
+  CITY_TABLE,
+  CUSTOMER_TABLE,
+  OPERATOR_TABLE,
+} from "@/constants/tables";
 import { createClient } from "@/lib/supabase/server";
 
 import type { List } from "./types";
@@ -94,20 +99,27 @@ export async function AddNewPelanggan(
     data: { user },
   } = await supabase.auth.getUser();
 
+  const { data: operator } = await supabase
+    .from(OPERATOR_TABLE)
+    .select("name, id")
+    .eq("user_id", user?.id)
+    .single();
+
   const payloadInsert = {
-    user_id: user?.id,
-    nama: payload.name,
-    bidang_usaha: payload.business,
-    logo: fileLink,
     province_id: payload.province,
     city_id: payload.city,
-    alamat: payload.address,
+    user_id: operator?.id,
+    nama: payload.name,
+    bidang_usaha: payload.business,
     is_active: true,
+    logo: fileLink,
+    alamat: payload.address,
+    created_by: operator?.name,
+    updated_by: operator?.name,
   };
 
   const { error } = await supabase.from(CUSTOMER_TABLE).insert(payloadInsert);
 
-  console.log("error insert", error);
   if (error) {
     return {
       message: error.message,

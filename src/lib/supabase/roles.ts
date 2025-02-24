@@ -1,7 +1,7 @@
 "use server";
 
 import { ROLE_SALES, ROLE_TEAM_LEADER } from "@/constants/role";
-import { USER_WITH_ROLES } from "@/constants/tables";
+import { OPERATOR_TABLE } from "@/constants/tables";
 import { createClient } from "@/lib/supabase/server";
 import type { ROLES } from "@/types/roles";
 
@@ -17,10 +17,12 @@ export const getUserGroup = async (): Promise<{
   } = await supabase.auth.getUser();
 
   const { data: userRole, error } = await supabase
-    .from(USER_WITH_ROLES)
-    .select(`roles, parent_user_id`)
+    .from(OPERATOR_TABLE)
+    .select(`roles, parent_user_id, id`)
     .eq("user_id", user?.id)
     .single();
+
+  console.log("allala", error);
 
   if (error) {
     return {
@@ -36,18 +38,18 @@ export const getUserGroup = async (): Promise<{
 
   if (roles === ROLE_SALES) {
     return {
-      user_ids: [user?.id ?? ""],
+      user_ids: [userRole?.id ?? ""],
     };
   }
 
   if (roles === ROLE_TEAM_LEADER) {
     const { data: groupUser } = await supabase
-      .from(USER_WITH_ROLES)
-      .select("user_id")
+      .from(OPERATOR_TABLE)
+      .select("id")
       .eq("parent_user_id", parent_user_id);
 
     return {
-      user_ids: groupUser?.map((user) => user.user_id) || [],
+      user_ids: groupUser?.map((user) => user.id) || [],
     };
   }
 

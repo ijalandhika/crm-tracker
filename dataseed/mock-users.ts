@@ -64,16 +64,16 @@ async function seedUsers(
 }
 
 console.log("Seeding sales user");
-seedUsers("admin", "admin@hotmail.com")
+seedUsers("sales", "sales@hotmail.com")
   .catch(console.error)
   .finally(() => process.exit());
 
-// console.log("Seeding team leader user");
-// seedUsers("team_leader")
-//   .catch(console.error)
-//   .finally(() => process.exit());
+console.log("Seeding team leader user");
+seedUsers("team_leader", "team_leader@hotmail.com")
+  .catch(console.error)
+  .finally(() => process.exit());
 
-// console.log("Seeding admin user");
-// seedUsers("admin")
-//   .catch(console.error)
-//   .finally(() => process.exit());
+console.log("Seeding admin user");
+seedUsers("admin", "admin@hotmail.com")
+  .catch(console.error)
+  .finally(() => process.exit());

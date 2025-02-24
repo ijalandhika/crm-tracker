@@ -20,6 +20,8 @@ export async function GetPelanggan(
 
   const { user_ids, error: groupError } = await getUserGroup();
 
+  console.log("lalalal", user_ids);
+
   if (groupError) {
     return {
       rows: [],
@@ -32,7 +34,8 @@ export async function GetPelanggan(
     .from(CUSTOMER_TABLE)
     .select(
       `id, nama, bidang_usaha, is_active, logo, alamat, 
-       created_by, updated_by, created_at, updated_at`,
+       created_by, updated_by, created_at, updated_at
+       `,
       { count: "exact" }
     )
     .order("created_at", { ascending: false })

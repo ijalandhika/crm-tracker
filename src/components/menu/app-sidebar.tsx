@@ -13,63 +13,17 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-// This is sample data.
-const data = {
-  versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
-  navMain: [
-    {
-      title: "Pelanggan",
-      url: "#",
-      items: [
-        {
-          title: "Kelola Pelanggan",
-          url: "/dashboard/pelanggan",
-          isActive: true,
-        },
-      ],
-    },
-    // {
-    //   title: "Kelola Pengguna",
-    //   url: "#",
-    //   items: [
-    //     {
-    //       title: "Routing",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Data Fetching",
-    //       url: "#",
-    //       isActive: true,
-    //     },
-    //   ],
-    // },
-    // {
-    //   title: "Kelola Laporan",
-    //   url: "#",
-    //   items: [
-    //     {
-    //       title: "Components",
-    //       url: "#",
-    //     },
-    //   ],
-    // },
-    // {
-    //   title: "Kelola Pipeline",
-    //   url: "#",
-    //   items: [
-    //     {
-    //       title: "Accessibility",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Fast Refresh",
-    //       url: "#",
-    //     },
-    //   ],
-    // },
-  ],
-};
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+import { GenerateMenu } from "./menu";
+import { headers } from "next/headers";
+
+export async function AppSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
+  const heads = await headers();
+  const fullUrl = heads.get("x-url");
+  const pathname = fullUrl?.replace(/^https?:\/\/[^\/]+/, "");
+
+  const menu = await GenerateMenu();
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -84,14 +38,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent className="gap-0">
         {/* We create a SidebarGroup for each parent. */}
-        {data.navMain.map((item) => (
+        {menu.navMain.map((item) => (
           <SidebarGroup key={item.title}>
             <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {item.items.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={item.isActive}>
+                    <SidebarMenuButton asChild isActive={pathname === item.url}>
                       <Link href={item.url}>{item.title}</Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
