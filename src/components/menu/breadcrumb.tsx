@@ -12,6 +12,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Fragment } from "react";
+import { validate as isUUID } from "uuid";
 
 const CRMBreadcrumb = () => {
   const pathname = usePathname();
@@ -36,7 +37,9 @@ const CRMBreadcrumb = () => {
                       {e}
                     </Link>
                   ) : (
-                    <BreadcrumbPage className="capitalize">{e}</BreadcrumbPage>
+                    <BreadcrumbPage className="capitalize">
+                      {isUUID(e) ? "Detail" : e}
+                    </BreadcrumbPage>
                   )}
                 </BreadcrumbItem>
                 {i === pathParts.length - 1 ? null : (

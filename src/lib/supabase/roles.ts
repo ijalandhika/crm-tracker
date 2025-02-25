@@ -22,8 +22,6 @@ export const getUserGroup = async (): Promise<{
     .eq("user_id", user?.id)
     .single();
 
-  console.log("allala", error);
-
   if (error) {
     return {
       error: error.message,

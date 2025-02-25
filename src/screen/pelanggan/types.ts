@@ -10,3 +10,13 @@ export type Pelanggan = {
   updated_by?: string;
   updated_at?: string;
 };
+
+export type Rows = {
+  id: string;
+  name: string;
+};
+
+export type List = {
+  rows: Rows[];
+  message: string;
+};

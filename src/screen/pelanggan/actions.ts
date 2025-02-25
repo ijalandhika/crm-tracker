@@ -1,9 +1,14 @@
 "use server";
 
-import { CUSTOMER_TABLE } from "@/constants/tables";
+import { PROVINCE_TABLE, CITY_TABLE, CUSTOMER_TABLE } from "@/constants/tables";
 import { createClient } from "@/lib/supabase/server";
-import { Pelanggan } from "./types";
+import { Pelanggan, List } from "./types";
 import { getUserGroup } from "@/lib/supabase/roles";
+import type { PostgrestError } from "@supabase/supabase-js";
+
+interface ListArea extends List {
+  error?: PostgrestError;
+}
 
 export async function GetPelanggan(
   currentPage?: number,
@@ -19,8 +24,6 @@ export async function GetPelanggan(
   const supabase = await createClient();
 
   const { user_ids, error: groupError } = await getUserGroup();
-
-  console.log("lalalal", user_ids);
 
   if (groupError) {
     return {
@@ -49,8 +52,6 @@ export async function GetPelanggan(
     query.in("user_id", user_ids);
   }
 
-  console.log("lalalala", user_ids);
-
   const { data, count, error } = await query;
 
   if (error) {
@@ -66,6 +67,51 @@ export async function GetPelanggan(
   return {
     rows: data as Pelanggan[],
     totalPages,
+    message: "success",
+  };
+}
+
+export async function GetProvinces(): Promise<ListArea> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from(PROVINCE_TABLE)
+    .select("id, name")
+    .order("name", { ascending: true });
+
+  if (error) {
+    return {
+      rows: [],
+      error,
+      message: error.message,
+    };
+  }
+
+  return {
+    rows: data,
+    message: "success",
+  };
+}
+
+export async function GetCities(provice_id: string): Promise<ListArea> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from(CITY_TABLE)
+    .select("id, name")
+    .eq("province_id", provice_id)
+    .order("name", { ascending: true });
+
+  if (error) {
+    return {
+      rows: [],
+      error,
+      message: error.message,
+    };
+  }
+
+  return {
+    rows: data,
     message: "success",
   };
 }

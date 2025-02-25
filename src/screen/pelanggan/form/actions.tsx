@@ -1,66 +1,10 @@
 "use server";
 
-import {
-  PROVINCE_TABLE,
-  CITY_TABLE,
-  CUSTOMER_TABLE,
-  OPERATOR_TABLE,
-} from "@/constants/tables";
+import { CUSTOMER_TABLE, OPERATOR_TABLE } from "@/constants/tables";
 import { createClient } from "@/lib/supabase/server";
 
-import type { List } from "./types";
-import type { PostgrestError } from "@supabase/supabase-js";
 import * as z from "zod";
 import { formSchema } from "./form";
-
-interface ListArea extends List {
-  error?: PostgrestError;
-}
-
-export async function GetProvinces(): Promise<ListArea> {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase
-    .from(PROVINCE_TABLE)
-    .select("id, name")
-    .order("name", { ascending: true });
-
-  if (error) {
-    return {
-      rows: [],
-      error,
-      message: error.message,
-    };
-  }
-
-  return {
-    rows: data,
-    message: "success",
-  };
-}
-
-export async function GetCities(provice_id: string): Promise<ListArea> {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase
-    .from(CITY_TABLE)
-    .select("id, name")
-    .eq("province_id", provice_id)
-    .order("name", { ascending: true });
-
-  if (error) {
-    return {
-      rows: [],
-      error,
-      message: error.message,
-    };
-  }
-
-  return {
-    rows: data,
-    message: "success",
-  };
-}
 
 export async function AddNewPelanggan(
   payload: z.infer<typeof formSchema>
@@ -75,7 +19,7 @@ export async function AddNewPelanggan(
     const base64Data = payload?.logo?.split(",")[1];
     const buffer = Buffer.from(base64Data, "base64");
     const fileName = `${Math.random()}.png`;
-    const filePath = `/logos/${payload.name
+    const filePath = `logos/${payload.name
       ?.toLowerCase()
       ?.replace(/\s/g, "")}/${fileName}`;
 

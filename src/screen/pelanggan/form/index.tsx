@@ -27,8 +27,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { List, Rows } from "./types";
-import { AddNewPelanggan, GetCities } from "./actions";
+import type { List, Rows } from "../types";
+import { AddNewPelanggan } from "./actions";
+import { GetCities } from "../actions";
 import { convertFileToBase64 } from "@/lib/image";
 import { useRouter } from "next/navigation";
 
@@ -57,8 +58,7 @@ export default function CustomerForm({ provinces }: CustomerFormProps) {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Here you would typically send the data to your server
-
+    setMessage(null);
     startIsProcessing(() => {
       AddNewPelanggan(values).then((result) => {
         if (result.error) {

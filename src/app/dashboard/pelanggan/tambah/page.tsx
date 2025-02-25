@@ -1,6 +1,6 @@
 import { Separator } from "@/components/ui/separator";
 import CustomerForm from "@/screen/pelanggan/form";
-import { GetProvinces } from "@/screen/pelanggan/form/actions";
+import { GetProvinces } from "@/screen/pelanggan/actions";
 
 export default async function CustomerFormPage() {
   const provinces = await GetProvinces();

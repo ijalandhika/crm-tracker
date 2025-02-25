@@ -12,6 +12,7 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import Link from "next/link";
 
 interface PelangganDataTableProps {
   rows: Pelanggan[];
@@ -79,6 +80,7 @@ const PelangganDataTable = ({
                   Bidang Usaha
                 </TableHead>
                 <TableHead className="text-center text-white">Status</TableHead>
+                <TableHead className="text-center text-white">Aksi</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -102,6 +104,11 @@ const PelangganDataTable = ({
                     ) : (
                       <Badge variant="destructive">Tidak Aktif</Badge>
                     )}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Link href={`/dashboard/pelanggan/${customer.id}`}>
+                      Lihat Detail
+                    </Link>
                   </TableCell>
                 </TableRow>
               ))}
