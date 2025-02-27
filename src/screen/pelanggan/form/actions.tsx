@@ -29,7 +29,6 @@ export async function AddNewPelanggan(
         contentType: "image/png",
       });
 
-    console.log("error", error);
     fileLink = `${process.env.NEXT_PUBLIC_IMAGES_EVENT_URL}/${filePath}`;
     if (error) {
       return {

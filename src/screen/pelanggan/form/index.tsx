@@ -85,7 +85,7 @@ export default function CustomerForm({ provinces }: CustomerFormProps) {
   }
 
   return (
-    <Form {...form}>
+    <Form {...form} key="detail-form">
       <div className="flex flex-col items-center text-center">
         <p className="text-balance text-red-500">{message}</p>
       </div>

@@ -37,33 +37,37 @@ const PelangganDataTable = ({
         <div className="grid gap-4">
           {rows?.map((customer) => (
             <Card key={customer.id}>
-              <CardContent className="p-4">
-                <div className="flex justify-between py-2 border-b last:border-0">
-                  <Image
-                    src={customer?.logo ?? "/images/logofront.png"}
-                    width={50}
-                    height={50}
-                    alt={customer.nama}
-                  />
-                  <span className="font-medium">
-                    {customer.is_active ? (
-                      <Badge>Aktif</Badge>
-                    ) : (
-                      <Badge variant="destructive">Tidak Aktif</Badge>
-                    )}
-                  </span>
-                </div>
-                <div className="flex flex-col space-y-1.5 mt-4">
-                  <span className="font-bold">Nama Pelanggan</span>
-                  <span className="text-muted-foreground">{customer.nama}</span>
-                </div>
-                <div className="flex flex-col space-y-1.5 mt-4">
-                  <span className="font-bold">Bidang Usaha</span>
-                  <span className="text-muted-foreground">
-                    {customer.bidang_usaha}
-                  </span>
-                </div>
-              </CardContent>
+              <Link href={`/dashboard/pelanggan/${customer.id}`}>
+                <CardContent className="p-4">
+                  <div className="flex justify-between py-2 border-b last:border-0">
+                    <Image
+                      src={customer?.logo ?? "/images/logofront.png"}
+                      width={50}
+                      height={50}
+                      alt={customer.nama}
+                    />
+                    <span className="font-medium">
+                      {customer.is_active ? (
+                        <Badge>Aktif</Badge>
+                      ) : (
+                        <Badge variant="destructive">Tidak Aktif</Badge>
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex flex-col space-y-1.5 mt-4">
+                    <span className="font-bold">Nama Pelanggan</span>
+                    <span className="text-muted-foreground">
+                      {customer.nama}
+                    </span>
+                  </div>
+                  <div className="flex flex-col space-y-1.5 mt-4">
+                    <span className="font-bold">Bidang Usaha</span>
+                    <span className="text-muted-foreground">
+                      {customer.bidang_usaha}
+                    </span>
+                  </div>
+                </CardContent>
+              </Link>
             </Card>
           ))}
         </div>

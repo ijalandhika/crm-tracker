@@ -1,13 +1,54 @@
 "use server";
-import { CUSTOMER_TABLE, OPERATOR_TABLE } from "@/constants/tables";
+import {
+  CUSTOMER_CONTACT_TABLE,
+  CUSTOMER_TABLE,
+  OPERATOR_TABLE,
+} from "@/constants/tables";
 import { createClient } from "@/lib/supabase/server";
 
 import * as z from "zod";
 import { formSchema } from "./form";
+import { ContactPelanggan } from "../types";
+
+export async function GetPelangganByID(pelanggan_id: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from(CUSTOMER_TABLE)
+    .select(
+      `
+        nama, bidang_usaha, is_active, logo, alamat, 
+        provinces(id,name),
+        cities(id, name),
+        operators(id, name)
+        `
+    )
+    .eq("id", pelanggan_id)
+    .single();
+
+  return {
+    data,
+    error,
+  };
+}
+
+export async function GetKontakPelanggan(pelanggan_id: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from(CUSTOMER_CONTACT_TABLE)
+    .select("id, name, email, phone, email, is_active")
+    .eq("customer_id", pelanggan_id);
+
+  if (error) {
+    return [];
+  }
+
+  return data;
+}
 
 export async function EditPelanggan(
   payload: z.infer<typeof formSchema>,
-  pelanggan_id: string
+  pelanggan_id: string,
+  kontak?: ContactPelanggan[]
 ) {
   const supabase = await createClient();
 
@@ -41,6 +82,25 @@ export async function EditPelanggan(
       message: error.message,
       error: true,
     };
+  }
+
+  if ((kontak?.length ?? 0) > 0) {
+    await supabase
+      .from(CUSTOMER_CONTACT_TABLE)
+      .delete()
+      .eq("customer_id", pelanggan_id);
+
+    const payloadInsert = kontak?.map((e) => ({
+      customer_id: pelanggan_id,
+      name: e.name,
+      phone: e.phone,
+      email: e.email,
+      is_active: e.is_active,
+      created_by: operator?.name,
+      updated_by: operator?.name,
+    }));
+
+    await supabase.from(CUSTOMER_CONTACT_TABLE).insert(payloadInsert);
   }
 
   return {

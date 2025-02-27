@@ -29,6 +29,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -37,6 +38,9 @@ import { useForm } from "react-hook-form";
 import { List, Rows } from "../types";
 import { GetCities } from "../actions";
 import { EditPelanggan } from "./actions";
+import { type ContactPelanggan } from "../types";
+import Contacts from "./contacts";
+import { Separator } from "@/components/ui/separator";
 
 export interface DetailPelangganProps {
   customer_data: {
@@ -52,6 +56,7 @@ export interface DetailPelangganProps {
   provinces: List;
   selectedCities: List;
   pelanggan_id: string;
+  kontak?: ContactPelanggan[];
 }
 
 const DetailPelanggan = ({
@@ -59,25 +64,29 @@ const DetailPelanggan = ({
   provinces,
   selectedCities,
   pelanggan_id,
+  kontak = [],
 }: DetailPelangganProps) => {
   const router = useRouter();
+
+  const [contacts, setContacts] = useState<ContactPelanggan[]>(kontak);
 
   const [isLoadCity, startIsLoadCity] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
   const [isProcessing, startIsProcessing] = useTransition();
   const [cities, setCities] = useState<Rows[]>(selectedCities?.rows);
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = (formValues: z.infer<typeof formSchema>) => {
     setMessage(null);
     startIsProcessing(() => {
-      EditPelanggan(values, pelanggan_id).then((result) => {
+      EditPelanggan(formValues, pelanggan_id, contacts).then((result) => {
         if (result.error) {
           setMessage(result.message);
         }
 
         form.reset();
-        router.push("/dashboard/pelanggan");
+        toast.success("Berhasil", {
+          description: "Berhasil ubah data",
+        });
       });
     });
   };
@@ -94,6 +103,10 @@ const DetailPelanggan = ({
       });
     });
   }
+
+  const onBack = () => {
+    router.push("/dashboard/pelanggan");
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -300,7 +313,19 @@ const DetailPelanggan = ({
             </FormItem>
           )}
         />
+        <Separator />
+        <Contacts contacts={contacts} setContacts={setContacts} />
         <div className="flex justify-end">
+          <Button
+            variant="destructive"
+            type="button"
+            className="mr-4"
+            disabled={isLoadCity || isProcessing}
+            isLoading={isLoadCity || isProcessing}
+            onClick={onBack}
+          >
+            Kembali
+          </Button>
           <Button
             type="submit"
             disabled={isLoadCity || isProcessing}

@@ -9,3 +9,9 @@ export const formSchema = z.object({
   city: z.string().min(1, "Wajib mengisi kota"),
   address: z.string().min(5, "Minimal 5 karakter"),
 });
+
+export const kontakFormSchema = z.object({
+  name: z.string().min(2, "Minimal 2 karakter"),
+  phone: z.string().min(5, "Minimal 5 karakter"),
+  email: z.string().email(),
+});

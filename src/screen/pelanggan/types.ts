@@ -20,3 +20,11 @@ export type List = {
   rows: Rows[];
   message: string;
 };
+
+export type ContactPelanggan = {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  is_active?: boolean;
+};
