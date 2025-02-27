@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { formSchema } from "./form";
 import { Button } from "@/components/ui/button";
 import { Check, ChevronsUpDown } from "lucide-react";
+import Image from "next/image";
 import {
   Command,
   CommandEmpty,
@@ -24,13 +25,13 @@ import {
   FormMessage,
   FormDescription,
 } from "@/components/ui/form";
+import { convertFileToBase64 } from "@/lib/image";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -41,6 +42,7 @@ import { EditPelanggan } from "./actions";
 import { type ContactPelanggan } from "../types";
 import Contacts from "./contacts";
 import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
 
 export interface DetailPelangganProps {
   customer_data: {
@@ -66,10 +68,8 @@ const DetailPelanggan = ({
   pelanggan_id,
   kontak = [],
 }: DetailPelangganProps) => {
-  const router = useRouter();
-
   const [contacts, setContacts] = useState<ContactPelanggan[]>(kontak);
-
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [isLoadCity, startIsLoadCity] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
   const [isProcessing, startIsProcessing] = useTransition();
@@ -81,11 +81,12 @@ const DetailPelanggan = ({
       EditPelanggan(formValues, pelanggan_id, contacts).then((result) => {
         if (result.error) {
           setMessage(result.message);
+          return;
         }
 
         form.reset();
         toast.success("Berhasil", {
-          description: "Berhasil ubah data",
+          description: "Berhasil ubah data pelanggan",
         });
       });
     });
@@ -103,10 +104,6 @@ const DetailPelanggan = ({
       });
     });
   }
-
-  const onBack = () => {
-    router.push("/dashboard/pelanggan");
-  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -313,19 +310,58 @@ const DetailPelanggan = ({
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="logo"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Logo</FormLabel>
+              <FormDescription>
+                Bisa dikosongkan apabila tidak diubah
+              </FormDescription>
+              <FormControl>
+                <div className="space-y-4">
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const imageBase64 = await convertFileToBase64(file);
+                        field.onChange(imageBase64);
+                        setLogoPreview(imageBase64 as string);
+                      }
+                    }}
+                    className="cursor-pointer"
+                  />
+                  {(logoPreview || field.value) && (
+                    <div className="relative h-40 w-40">
+                      <Image
+                        src={
+                          logoPreview || field.value || "/images/logofront.png"
+                        }
+                        alt="Logo preview"
+                        fill
+                        className="rounded-lg object-contain"
+                      />
+                    </div>
+                  )}
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <Separator />
         <Contacts contacts={contacts} setContacts={setContacts} />
         <div className="flex justify-end">
-          <Button
-            variant="destructive"
-            type="button"
-            className="mr-4"
-            disabled={isLoadCity || isProcessing}
-            isLoading={isLoadCity || isProcessing}
-            onClick={onBack}
+          <Link
+            href="/dashboard/pelanggan"
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 mr-4"
           >
             Kembali
-          </Button>
+          </Link>
           <Button
             type="submit"
             disabled={isLoadCity || isProcessing}

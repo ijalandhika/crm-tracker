@@ -23,7 +23,7 @@ import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { kontakFormSchema } from "@/screen/pelanggan/detail/form";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState, useEffect } from "react";
 import { type ContactPelanggan } from "../types";
 
 interface ContactPelangganProps {
@@ -34,6 +34,16 @@ interface ContactPelangganProps {
 const ContactPelanggan = ({ contacts, setContacts }: ContactPelangganProps) => {
   const [open, setOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const onShowHideModal = () => {
     setOpen((prev) => !prev);
@@ -72,7 +82,7 @@ const ContactPelanggan = ({ contacts, setContacts }: ContactPelangganProps) => {
         <div>
           <h2 className="text-2xl font-bold">Kontak Pelanggan</h2>
           <p className="text-sm text-muted-foreground">
-            Contact person pelanggan
+            Daftar kontak pelanggan
           </p>
         </div>
         <div>
@@ -156,6 +166,7 @@ const ContactPelanggan = ({ contacts, setContacts }: ContactPelangganProps) => {
         </div>
       </div>
       <ContactPelangganDataTable
+        isMobile={isMobile}
         contactData={contacts}
         onStatusChange={onChangeStatus}
       />

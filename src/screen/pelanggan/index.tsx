@@ -3,18 +3,15 @@
 import { lazy, Suspense, useCallback, useState, useEffect } from "react";
 import { GetPelanggan } from "./actions";
 import { InitLoading } from "./loading";
-import { useRouter } from "next/navigation";
 import PelangganDataTable from "./data-table";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import { Label } from "@radix-ui/react-label";
+import Link from "next/link";
 
 const postsPerPage = 10;
 
 export default function Pelanggan() {
-  const router = useRouter();
-
   const [currentPage, setCurrentPage] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
   const [query, setQuery] = useState("");
@@ -66,10 +63,13 @@ export default function Pelanggan() {
           className="max-w-sm"
           onChange={onChangeQuery}
         />
-        <Button onClick={() => router.push("/dashboard/pelanggan/tambah")}>
+        <Link
+          href="/dashboard/pelanggan/tambah"
+          className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 ml-2"
+        >
           <PlusIcon className="h-4 w-4" />
           <Label className="hidden md:block">Tambah Pelanggan</Label>
-        </Button>
+        </Link>
       </div>
       <Suspense fallback={<InitLoading />}>
         <PelangganComponent />

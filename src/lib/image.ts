@@ -9,3 +9,8 @@ export const convertFileToBase64 = (file: File): Promise<string> => {
     reader.readAsDataURL(file);
   });
 };
+
+export const getFileExtensionFromBase64 = (base64String: string) => {
+  const match = base64String.match(/^data:image\/(.*);base64,/);
+  return match ? match[1] : "png";
+};

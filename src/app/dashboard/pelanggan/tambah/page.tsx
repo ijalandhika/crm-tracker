@@ -4,7 +4,6 @@ import { GetProvinces } from "@/screen/pelanggan/actions";
 
 export default async function CustomerFormPage() {
   const provinces = await GetProvinces();
-  // const cities = await GetCities();
   return (
     <div className="container py-10">
       <div className="mx-auto max-w-2xl space-y-4">

@@ -72,6 +72,32 @@ export async function EditPelanggan(
     updated_by: operator?.name,
   };
 
+  if (payload.logo) {
+    const base64Data = payload?.logo?.split(",")[1];
+    const buffer = Buffer.from(base64Data, "base64");
+    const fileName = `${Math.random()}.png`;
+    const filePath = `logos/${payload.name
+      ?.toLowerCase()
+      ?.replace(/\s/g, "")}/${fileName}`;
+
+    const { error } = await supabase.storage
+      .from("images")
+      .upload(filePath, buffer, {
+        contentType: "image/png",
+      });
+
+    if (error) {
+      return {
+        message: error?.message,
+        error: true,
+      };
+    }
+    const fileLink = `${process.env.NEXT_PUBLIC_IMAGES_EVENT_URL}/${filePath}`;
+
+    // @ts-expect-error this is a custom payload
+    payloadEdit.logo = fileLink;
+  }
+
   const { error } = await supabase
     .from(CUSTOMER_TABLE)
     .update(payloadEdit)
