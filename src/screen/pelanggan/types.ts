@@ -11,6 +11,13 @@ export type Pelanggan = {
   updated_at?: string;
 };
 
+export type SalesGroup = {
+  id: string;
+  name: string;
+  user_id: string;
+  parent_user_id: string;
+};
+
 export type Rows = {
   id: string;
   name: string;

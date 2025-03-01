@@ -9,8 +9,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
+// import { cn } from "@/lib/utils";
 import { formSchema } from "./form";
 import { Button } from "@/components/ui/button";
+// import { Check, ChevronsUpDown } from "lucide-react";
+// import {
+//   Command,
+//   CommandEmpty,
+//   CommandGroup,
+//   CommandInput,
+//   CommandItem,
+//   CommandList,
+// } from "@/components/ui/command";
 import {
   Form,
   FormControl,
@@ -27,17 +37,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { List, Rows } from "../types";
+import type { List, Rows, SalesGroup } from "../types";
 import { AddNewPelanggan } from "./actions";
 import { GetCities } from "../actions";
 import { convertFileToBase64 } from "@/lib/image";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+// import {
+//   Popover,
+//   PopoverContent,
+//   PopoverTrigger,
+// } from "@/components/ui/popover";
 
 interface CustomerFormProps {
   provinces: List;
+  sales?: SalesGroup[];
 }
 
-export default function CustomerForm({ provinces }: CustomerFormProps) {
+export default function CustomerForm({ provinces, sales }: CustomerFormProps) {
+  const router = useRouter();
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [isLoadCity, startIsLoadCity] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
@@ -69,6 +87,7 @@ export default function CustomerForm({ provinces }: CustomerFormProps) {
         toast.success("Berhasil", {
           description: "Berhasil tambah data pelanggan",
         });
+        router.push("/dashboard/pelanggan");
       });
     });
   }
@@ -173,7 +192,7 @@ export default function CustomerForm({ provinces }: CustomerFormProps) {
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a province" />
+                    <SelectValue placeholder="Pilih provinsi" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -198,7 +217,7 @@ export default function CustomerForm({ provinces }: CustomerFormProps) {
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a city" />
+                    <SelectValue placeholder="Pilih kota" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -213,6 +232,35 @@ export default function CustomerForm({ provinces }: CustomerFormProps) {
             </FormItem>
           )}
         />
+        {sales && sales?.length > 0 && (
+          <FormField
+            control={form.control}
+            name="sales_id"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Sales</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Piih Sales" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {sales?.map((s) => (
+                      <SelectItem key={s.id} value={s.id}>
+                        {s.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <FormField
           control={form.control}
@@ -227,6 +275,7 @@ export default function CustomerForm({ provinces }: CustomerFormProps) {
             </FormItem>
           )}
         />
+
         <div className="flex justify-end">
           <Link
             href="/dashboard/pelanggan"

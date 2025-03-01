@@ -1,9 +1,12 @@
 import { Separator } from "@/components/ui/separator";
 import CustomerForm from "@/screen/pelanggan/form";
-import { GetProvinces } from "@/screen/pelanggan/actions";
+import { GetProvinces, GetSales } from "@/screen/pelanggan/actions";
 
 export default async function CustomerFormPage() {
   const provinces = await GetProvinces();
+
+  const sales = await GetSales();
+
   return (
     <div className="container py-10">
       <div className="mx-auto max-w-2xl space-y-4">
@@ -14,7 +17,7 @@ export default async function CustomerFormPage() {
           </p>
         </div>
         <Separator />
-        <CustomerForm provinces={provinces} />
+        <CustomerForm provinces={provinces} sales={sales} />
       </div>
     </div>
   );

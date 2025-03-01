@@ -5,6 +5,40 @@ import { OPERATOR_TABLE } from "@/constants/tables";
 import { createClient } from "@/lib/supabase/server";
 import type { ROLES } from "@/types/roles";
 
+export const getUserRoles = async (): Promise<{
+  role?: ROLES;
+  user_id?: string;
+  error?: string;
+}> => {
+  const supabase = await createClient();
+
+  // get current user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data: userRole, error } = await supabase
+    .from(OPERATOR_TABLE)
+    .select(`roles, parent_user_id, id`)
+    .eq("user_id", user?.id)
+    .single();
+
+  if (error) {
+    return {
+      error: error.message,
+    };
+  }
+
+  const { roles } = userRole as {
+    roles: ROLES;
+  };
+
+  return {
+    role: roles,
+    user_id: user?.id,
+  };
+};
+
 export const getUserGroup = async (): Promise<{
   user_ids: string[];
   error?: string;
@@ -29,9 +63,8 @@ export const getUserGroup = async (): Promise<{
     };
   }
 
-  const { roles, parent_user_id } = userRole as {
+  const { roles } = userRole as {
     roles: ROLES;
-    parent_user_id: string;
   };
 
   if (roles === ROLE_SALES) {
@@ -44,7 +77,7 @@ export const getUserGroup = async (): Promise<{
     const { data: groupUser } = await supabase
       .from(OPERATOR_TABLE)
       .select("id")
-      .eq("parent_user_id", parent_user_id);
+      .eq("parent_user_id", user?.id);
 
     return {
       user_ids: groupUser?.map((user) => user.id) || [],

@@ -1,10 +1,16 @@
 "use server";
 
-import { PROVINCE_TABLE, CITY_TABLE, CUSTOMER_TABLE } from "@/constants/tables";
+import {
+  PROVINCE_TABLE,
+  CITY_TABLE,
+  CUSTOMER_TABLE,
+  OPERATOR_TABLE,
+} from "@/constants/tables";
 import { createClient } from "@/lib/supabase/server";
 import { Pelanggan, List } from "./types";
-import { getUserGroup } from "@/lib/supabase/roles";
+import { getUserGroup, getUserRoles } from "@/lib/supabase/roles";
 import type { PostgrestError } from "@supabase/supabase-js";
+import { ROLE_ADMIN, ROLE_SALES, ROLE_TEAM_LEADER } from "@/constants/role";
 
 interface ListArea extends List {
   error?: PostgrestError;
@@ -69,6 +75,36 @@ export async function GetPelanggan(
     totalPages,
     message: "success",
   };
+}
+
+export async function GetSales() {
+  const { role, user_id } = await getUserRoles();
+
+  const supabase = await createClient();
+
+  if (!role || role === ROLE_SALES) {
+    return [];
+  }
+
+  const query = supabase
+    .from(OPERATOR_TABLE)
+    .select(`id, name, user_id, parent_user_id`);
+
+  if ([ROLE_TEAM_LEADER, ROLE_ADMIN].indexOf(role) > -1) {
+    query.eq("roles", "sales");
+  }
+
+  if (role === ROLE_TEAM_LEADER) {
+    query.eq("parent_user_id", user_id);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    return [];
+  }
+
+  return data;
 }
 
 export async function GetProvinces(): Promise<ListArea> {

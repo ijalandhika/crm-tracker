@@ -1,15 +1,6 @@
 "use server";
 
-const pelangganMenu = {
-  title: "Pelanggan",
-  url: "#",
-  items: [
-    {
-      title: "Kelola Pelanggan",
-      url: "/dashboard/pelanggan",
-    },
-  ],
-};
+import { menuSales, menuTeamLeader, menuAdmin } from "./consts";
 
 import { ROLE_ADMIN, ROLE_TEAM_LEADER } from "@/constants/role";
 import { OPERATOR_TABLE } from "@/constants/tables";
@@ -30,24 +21,24 @@ export async function GenerateMenu() {
 
   if (error) {
     return {
-      navMain: [pelangganMenu],
+      navMain: [menuSales],
     };
   }
 
-  if ([ROLE_TEAM_LEADER, ROLE_ADMIN].indexOf(data?.roles) > -1) {
-    pelangganMenu.items.push({
-      title: "Assign Pelanggan",
-      url: "/dashboard/assign",
-    });
-
+  if (data?.roles === ROLE_TEAM_LEADER) {
     return {
-      navMain: [pelangganMenu],
+      navMain: [menuTeamLeader],
+    };
+  }
+
+  if (data?.roles === ROLE_ADMIN) {
+    return {
+      navMain: [menuAdmin],
     };
   }
 
   // menu untuk sales
-
   return {
-    navMain: [pelangganMenu],
+    navMain: [menuSales],
   };
 }

@@ -51,7 +51,7 @@ export async function AddNewPelanggan(
   const payloadInsert = {
     province_id: payload.province,
     city_id: payload.city,
-    user_id: operator?.id,
+    user_id: payload?.sales_id ?? operator?.id,
     nama: payload.name,
     bidang_usaha: payload.business,
     is_active: true,

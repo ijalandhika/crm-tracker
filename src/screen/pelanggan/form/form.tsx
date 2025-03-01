@@ -8,5 +8,6 @@ export const formSchema = z
     province: z.string().min(1, "Wajib mengisi provinsi"),
     city: z.string().min(1, "Wajib mengisi kota"),
     address: z.string().min(5, "Minimal 5 karakter"),
+    sales_id: z.string().optional(),
   })
   .required();

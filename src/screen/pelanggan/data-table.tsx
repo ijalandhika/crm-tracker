@@ -75,16 +75,22 @@ const PelangganDataTable = ({
         <div className="rounded-md border">
           <Table>
             <TableHeader>
-              <TableRow className="bg-primary">
-                <TableHead className="text-white text-left">Logo</TableHead>
-                <TableHead className="text-white text-center">
+              <TableRow>
+                <TableHead className="text-primary text-left uppercase">
+                  Logo
+                </TableHead>
+                <TableHead className="text-primary text-center uppercase">
                   Nama Pelanggan
                 </TableHead>
-                <TableHead className="text-white text-center">
+                <TableHead className="text-primary text-center uppercase">
                   Bidang Usaha
                 </TableHead>
-                <TableHead className="text-center text-white">Status</TableHead>
-                <TableHead className="text-center text-white">Aksi</TableHead>
+                <TableHead className="text-center text-primary uppercase">
+                  Status
+                </TableHead>
+                <TableHead className="text-center text-primary uppercase">
+                  Aksi
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
